@@ -539,6 +539,31 @@
         .power-slider::-webkit-slider-thumb:hover {
             transform: scale(1.2);
         }
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            background: var(--primary-gold);
+            color: var(--dark-red);
+            transform: scale(1.05);
+        }
+
         @media (max-width: 600px) {
             .container { padding: 10px; }
             .hero-text h1 { font-size: 2.5rem !important; }
@@ -566,6 +591,7 @@
     </style>
 </head>
 <body>
+    <a href="index.html" class="home-btn">🏠 Trang Chủ</a>
     <div class="container">
         <section class="hero-bg neon-hero neon hero-header" style="margin-bottom: 0;">
             <div class="hero-text">

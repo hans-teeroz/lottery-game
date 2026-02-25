@@ -1,526 +1,210 @@
-<html>
-  <head>
-    <title>Sổ số kiến thiết - Nhà cái đến từ Pham Nương</title>
-    <link rel="stylesheet" href="./css/main.css" type="text/css" />
-    <script type="text/javascript" src="./js/Winwheel.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-  </head>
-  <body>
-    <section class="hero-bg hero-content neon-hero neon hero-header">
-        <div class="hero-text">
-          <!-- <h1 class="title logo">HÁI LỘC ĐẦU XUÂN</h1> -->
-          <h1 class="title logo"><b>H<span>ÁI</span> LỘ<span>C</span> Đ<span>Ầ</span>U XU<span>Â</span>N</b></h1>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Giải Trí Ms.Thuy - Tết 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #FFEC82;
+            --primary-red: #C41E3A;
+            --dark-red: #8B0000;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            background-image: url('./assets/tet.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-family: 'Oswald', sans-serif;
+            font-size: 4rem;
+            color: var(--primary-gold);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #ddd;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary-gold);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .game-card:hover::before {
+            opacity: 1;
+        }
+
+        .icon-box {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+            transition: transform 0.4s;
+        }
+
+        .game-card:hover .icon-box {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .game-card h2 {
+            font-family: 'Oswald', sans-serif;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .game-card p {
+            color: #ccc;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-red);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2.5rem; }
+            .game-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CHỌN TRÒ CHƠI</h1>
+            <p>Chào Mừng Quý Khách Đến Với Hệ Thống Giải Trí Ms.Thuy</p>
         </div>
-      </section>
-    <div class="fixed" align="center" style="margin-top: 10px">
-      <!-- <h1 class="title neonText">HÁI LỘC ĐẦU XUÂN</h1>
-      <br>
-      <br />
-      <br /> -->
-      
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td>
-            <div class="power_controls">
-              <br />
-              <br />
-              <table class="power" cellpadding="10" cellspacing="0">
-                <tr>
-                  <th align="center">Lực</th>
-                </tr>
-                <tr>
-                  <td
-                    width="78"
-                    align="center"
-                    id="pw3"
-                    onClick="powerSelected(3);"
-                  >
-                    Mạnh
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center" id="pw2" onClick="powerSelected(2);">
-                    Vừa
-                  </td>
-                </tr>
-                <tr>
-                  <td align="center" id="pw1" onClick="powerSelected(1);">
-                    Nhẹ
-                  </td>
-                </tr>
-              </table>
-              <br />
-              <img
-                id="spin_button"
-                src="./assets/spin_on.png"
-                alt="Spin"
-                onClick="startSpin();"
-              />
-              <br /><br />
-            &nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onClick="reset(); return false;">Chơi lại</a>
-            </div>
-          </td>
-          <td
-            width="438"
-            height="582"
-            class="the_wheel"
-            align="center"
-            valign="center"
-          >
-            <canvas id="canvas" width="434" height="434">
-              <p style="color: white" align="center">
-                Sorry, your browser doesn't support canvas. Please try another.
-              </p>
-            </canvas>
-          </td>
-          <td>
-            <div class="tableWrap" style="margin-left: 70px;">             
-              <table class="result" cellpadding="15" cellspacing="0">
-                <tr>
-                  <th >Giải thường</th>
-                  <th >Dãy số</th>
-                </tr>
-                
-                <tr>
-                <tr>
-                  <td id="spin-8" onClick="spinSelected(8);">Giải 8</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-8-0" class="item item-0" >?</span>
-                      <span id="spin-8-1" class="item item-1" >?</span>
-                      <span id="spin-8-2" class="item item-2" >?</span>
-                      <span id="spin-8-3" class="item item-3" >?</span>
-                      <span id="spin-8-4" class="item item-4" >?</span>
-                      <span id="spin-8-5" class="item item-5" >?</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-7" onClick="spinSelected(7);">Giải 7</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-7-0" class="item item-0" >?</span>
-                      <span id="spin-7-1" class="item item-1" >?</span>
-                      <span id="spin-7-2" class="item item-2" >?</span>
-                      <span id="spin-7-3" class="item item-3" >?</span>
-                      <span id="spin-7-4" class="item item-4" >?</span>
-                      <span id="spin-7-5" class="item item-5" >?</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-6" onClick="spinSelected(6);">Giải 6</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-6-0" class="item item-0" >?</span>
-                      <span id="spin-6-1" class="item item-1" >?</span>
-                      <span id="spin-6-2" class="item item-2" >?</span>
-                      <span id="spin-6-3" class="item item-3" >?</span>
-                      <span id="spin-6-4" class="item item-4" >?</span>
-                      <span id="spin-6-5" class="item item-5" >?</span>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-5" onClick="spinSelected(5);">Giải 5</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-5-0" class="item item-0" >?</span>
-                      <span id="spin-5-1" class="item item-1" >?</span>
-                      <span id="spin-5-2" class="item item-2" >?</span>
-                      <span id="spin-5-3" class="item item-3" >?</span>
-                      <span id="spin-5-4" class="item item-4" >?</span>
-                      <span id="spin-5-5" class="item item-5" >?</span>
-                    </div>
-                    
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-4" onClick="spinSelected(4);">Giải 4</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-4-0" class="item item-0" >?</span>
-                      <span id="spin-4-1" class="item item-1" >?</span>
-                      <span id="spin-4-2" class="item item-2" >?</span>
-                      <span id="spin-4-3" class="item item-3" >?</span>
-                      <span id="spin-4-4" class="item item-4" >?</span>
-                      <span id="spin-4-5" class="item item-5" >?</span>
-                    </div>
-                    
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-3" onClick="spinSelected(3);">Giải 3</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-3-0" class="item item-0" >?</span>
-                      <span id="spin-3-1" class="item item-1" >?</span>
-                      <span id="spin-3-2" class="item item-2" >?</span>
-                      <span id="spin-3-3" class="item item-3" >?</span>
-                      <span id="spin-3-4" class="item item-4" >?</span>
-                      <span id="spin-3-5" class="item item-5" >?</span>
-                    </div>
 
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-2" onClick="spinSelected(2);">Giải nhì</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-2-0" class="item item-0" >?</span>
-                      <span id="spin-2-1" class="item item-1" >?</span>
-                      <span id="spin-2-2" class="item item-2" >?</span>
-                      <span id="spin-2-3" class="item item-3" >?</span>
-                      <span id="spin-2-4" class="item item-4" >?</span>
-                      <span id="spin-2-5" class="item item-5" >?</span>
-                    </div>
+        <div class="game-grid">
+            <!-- Game 1: Lì Xì -->
+            <a href="li-xi.html" class="game-card">
+                <span class="badge">Hot</span>
+                <div class="icon-box">🧧</div>
+                <h2>LÌ XÌ MAY MẮN</h2>
+                <p>Quay thưởng nhận lộc đầu năm. Tỷ lệ trúng thưởng cực cao, quà tặng hấp dẫn!</p>
+            </a>
 
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-1" onClick="spinSelected(1);">Giải nhất</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-1-0" class="item item-0" >?</span>
-                      <span id="spin-1-1" class="item item-1" >?</span>
-                      <span id="spin-1-2" class="item item-2" >?</span>
-                      <span id="spin-1-3" class="item item-3" >?</span>
-                      <span id="spin-1-4" class="item item-4" >?</span>
-                      <span id="spin-1-5" class="item item-5" >?</span>
-                    </div>
+            <!-- Game 2: Xổ Số 6 Số -->
+            <a href="xo-so-6.html" class="game-card">
+                <div class="icon-box">🎰</div>
+                <h2>XỔ SỐ 6 SỐ</h2>
+                <p>Trải nghiệm cảm giác hồi hộp với vòng quay xổ số 6 chữ số chuyên nghiệp.</p>
+            </a>
 
-                  </td>
-                </tr>
-                <tr>
-                  <td id="spin-0" onClick="spinSelected(0);">Giải đặc biệt</td>
-                  <td>
-                    <div class="row">
-                      <span id="spin-0-0" class="item item-0" >?</span>
-                      <span id="spin-0-1" class="item item-1" >?</span>
-                      <span id="spin-0-2" class="item item-2" >?</span>
-                      <span id="spin-0-3" class="item item-3" >?</span>
-                      <span id="spin-0-4" class="item item-4" >?</span>
-                      <span id="spin-0-5" class="item item-5" >?</span>
-                    </div>
+            <!-- Game 3: Xổ Số 4 Số -->
+            <a href="xo-so-4.html" class="game-card">
+                <div class="icon-box">🎫</div>
+                <h2>XỔ SỐ 4 SỐ</h2>
+                <p>Phiên bản xổ số rút gọn 4 chữ số, quay nhanh, thưởng lớn dành cho mọi người.</p>
+            </a>
+        </div>
 
-                  </td>
-                </tr>
-              </table>
-              
-          </td>
-        </tr>
-      </table>
+        <footer style="margin-top: 80px; color: rgba(255,255,255,0.4); font-size: 0.9rem;">
+            &copy; 2026 Ms.Thuy Entertainment Group. All Rights Reserved.
+        </footer>
     </div>
-    <script src="./data/lotteries.js"></script>
-    <script>
-      //   window.addEventListener("load", (event) => {
-
-      //     // audio.volume = 0.2;
-      //     // audio2.loop();
-      //   });
-      $(document).ready(function () {
-            getLotteries();
-      //   var audio2 = new Audio("2.mp3");
-      //   const promise = audio2.play();
-      //   if (promise !== undefined) {
-      //     promise
-      //       .then(() => {
-      //         // Autoplay started
-      //         audio2.play();
-      //         audio2.loop = true;
-      //       })
-      //       .catch((error) => {
-      //         // Autoplay was prevented.
-      //         //   audio2.muted = true;
-      //         audio2.play();
-      //         audio2.loop = true;
-      //       });
-      //   }
-    
-        // if (localStorage.getItem(localStorage.getItem("current")).length < 6) {
-        //   $("#"+localStorage.getItem("current")).addClass("pw4");
-        // } else {
-        //   $("#"+localStorage.getItem("current")).addClass("pw5");
-        // }
-        document.getElementById("spin_button").src = "./assets/spin_on.png";
-        document.getElementById("spin_button").className = "clickable";
-        $("#"+localStorage.getItem("current")).addClass("pw4");
-        for (let index = 0; index < 9; index++) {
-            let spins = localStorage.getItem("spin-"+index) || [];
-            if (spins.length == 6) {
-              $("#spin-"+index).addClass("pw5");
-            }
-            for (let indexSpin = 0; indexSpin < spins.length; indexSpin++) {
-              $("#spin-"+index+"-"+indexSpin).text(spins.split("")[indexSpin]);
-            }
-          }
-      });
-      // Create new wheel object specifying the parameters at creation time.
-      const arr_numbers = [
-        { fillStyle: "#fafafa", text: "0" },
-        { fillStyle: "#009B77", text: "1" },
-        { fillStyle: "#ff0000", text: "2" },
-        { fillStyle: "#777777", text: "3" },
-        { fillStyle: "#ff7f00", text: "4" },
-        { fillStyle: "#80ffee", text: "5" },
-        { fillStyle: "#0000ff", text: "6" },
-        { fillStyle: "#86ef6f", text: "7" },
-        { fillStyle: "#6667AB", text: "8" },
-        { fillStyle: "#FFEC82", text: "9" },
-      ];
-      var theWheel = new Winwheel({
-        numSegments: 10, // Specify number of segments.
-        outerRadius: 212, // Set outer radius so wheel fits inside the background.
-        textFontSize: 35, // Set font size as desired.
-        // Define segments including colour and text.
-        
-        segments: arr_numbers,
-        // Specify the animation to use.
-        animation: {
-          type: "spinToStop",
-          duration: 5,
-          spins: 10,
-          callbackFinished: alertPrize,
-          callbackSound: playSound, // Function to call when the tick sound is to be triggered.
-          soundTrigger: "pin", // Specify pins are to trigger the sound, the other option is 'segment'.
-        },
-        pins: {
-          number: 20, // Number of pins. They space evenly around the wheel.
-        },
-      });
-
-      // -----------------------------------------------------------------
-      // This function is called when the segment under the prize pointer changes
-      // we can play a small tick sound here like you would expect on real prizewheels.
-      // -----------------------------------------------------------------
-      var audio = new Audio("./assets/tick.mp3"); // Create audio object and load tick.mp3 file.
-      var audio2 = new Audio("./assets/2.mp3");
-
-      function playSound() {
-        // Stop and rewind the sound if it already happens to be playing.
-        audio.pause();
-        audio.currentTime = 0;
-
-        // Play the sound.
-        audio.play();
-        audio2.play();
-        audio2.loop = true;
-      }
-
-      // -------------------------------------------------------
-      // Called when the spin animation has finished by the callback feature of the wheel because I specified callback in the parameters
-      // note the indicated segment is passed in as a parmeter as 99% of the time you will want to know this to inform the user of their prize.
-      // -------------------------------------------------------
-      function alertPrize(indicatedSegment) {
-        // Do basic alert of the segment text.
-        // You would probably want to do something more interesting with this information.
-        alert("Số " + indicatedSegment.text);
-        let spinCurrent = getSpinCurrent();
-        let result_spin = spinCurrent + indicatedSegment.text;
-        localStorage.setItem(getCurrent(), result_spin);
-        getSpins(getCurrent().slice(-1))
-        powerSelected('3');
-        if (result_spin.length >= 6) {
-          $("#"+getCurrent()).addClass("pw5");
-          localStorage.setItem("current", "");
-        }
-        resetWheel();
-      }
-
-      function getCurrent() {
-        return localStorage.getItem('current');
-      }
-
-      function getSpinCurrent() {
-        return localStorage.getItem(getCurrent());
-      }
-
-      function getLotteries() {
-        if (localStorage.getItem('lotteries')) {
-          return localStorage.getItem('lotteries');
-        }
-        localStorage.setItem('lotteries', lotteries)
-        return lotteries;
-      }
-
-      // =======================================================================================================================
-      // Code below for the power controls etc which is entirely optional. You can spin the wheel simply by
-      // calling theWheel.startAnimation();
-      // =======================================================================================================================
-      var wheelPower = 0;
-      var wheelSpinning = false;
-      let goc = Math.floor(360/arr_numbers.length);
-
-      // -------------------------------------------------------
-      // Function to handle the onClick on the power buttons.
-      // -------------------------------------------------------
-      function powerSelected(powerLevel) {
-        // Ensure that power can't be changed while wheel is spinning.
-        if (wheelSpinning == false) {
-          // Reset all to grey incase this is not the first time the user has selected the power.
-          document.getElementById("pw1").className = "";
-          document.getElementById("pw2").className = "";
-          document.getElementById("pw3").className = "";
-
-          // Now light up all cells below-and-including the one selected by changing the class.
-          if (powerLevel >= 1) {
-            document.getElementById("pw1").className = "pw1";
-          }
-
-          if (powerLevel >= 2) {
-            document.getElementById("pw2").className = "pw2";
-          }
-
-          if (powerLevel >= 3) {
-            document.getElementById("pw3").className = "pw3";
-          }
-
-          // Set wheelPower var used when spin button is clicked.
-          wheelPower = powerLevel;
-
-          // Light up the spin button by changing it's source image and adding a clickable class to it.
-          document.getElementById("spin_button").src = "./assets/spin_on.png";
-          document.getElementById("spin_button").className = "clickable";
-        }
-      }
-
-      // -------------------------------------------------------
-      // Click handler for spin button.
-      // -------------------------------------------------------
-      function startSpin() {
-        // Ensure that spinning can't be clicked again while already running.
-        if (wheelSpinning == false) {
-          // Based on the power level selected adjust the number of spins for the wheel, the more times is has
-          // to rotate with the duration of the animation the quicker the wheel spins.
-          if (wheelPower == 1) {
-            theWheel.animation.spins = 8;
-          } else if (wheelPower == 2) {
-            theWheel.animation.spins = 16;
-          } else if (wheelPower == 3) {
-            theWheel.animation.spins = 24;
-          } else {
-            theWheel.animation.spins = Math.floor(Math.random() * 25);
-          }
-
-          // Disable the spin button so can't click again while wheel is spinning.
-          if (getCurrent() == "" || getCurrent() == null) {
-            alert("Vui lòng chọn giải thưởng để quay số!");
-            return;
-          } 
-
-          let i = Math.floor((Math.random() * (goc - 1)));
-          var stopAt = 0;
-          let currentLenghtSpin = getSpinCurrent().length || 0;
-          switch (currentLenghtSpin) {
-            case 0:
-              stopAt = 181 + i;
-              theWheel.animation.stopAngle = stopAt;
-              break;
-            case 1:
-              stopAt = 325 + i;
-              theWheel.animation.stopAngle = stopAt;
-              break;
-            case 2:
-              theWheel.animation.stopAngle = genarateNextNumber(2);
-              break;
-            case 3:
-              theWheel.animation.stopAngle = genarateNextNumber(3);
-              break;
-            case 4:
-              theWheel.animation.stopAngle = genarateNextNumber(4);
-              
-              break;
-            case 5:
-              theWheel.animation.stopAngle = genarateNextNumber(5);
-              break;
-            default:
-              break;
-          }
- 
-          // Important thing is to set the stopAngle of the animation before stating the spin.
-          
-          // Begin the spin animation by calling startAnimation on the wheel object.
-          theWheel.startAnimation();
-
-          // Set to true so that power can't be changed and spin button re-enabled during
-          // the current animation. The user will have to reset before spinning again.
-          wheelSpinning = true;
-        }
-      }
-
-      function genarateNextNumber(index) {
-        let numberCurrent = Number(getSpinCurrent()) * Math.pow(10, (6-index));
-        let numberCurrent2 = numberCurrent + Math.pow(10, (6-index));
-        let lotteries = getLotteries().split(',');
-        let newArray = lotteries.filter((item) => Number(item) >= numberCurrent && Number(item) < numberCurrent2);
-        if (newArray.length > 0) {
-          let lottery = newArray[Math.floor((Math.random() * newArray.length))];
-          let numberNext = Number(lottery.charAt(index));
-          console.log(newArray, lottery, numberNext);
-          let stopAt = goc * numberNext + 1 + Math.floor((Math.random() * (goc -1)))
-          // console.log(stopAt)
-          if (index == 5) {
-            const newLotteries = lotteries.filter(element => element !== lottery);
-            localStorage.setItem('lotteries', newLotteries)
-          }
-          return stopAt;
-        }
-      }
-
-      // -------------------------------------------------------
-      // Function for reset button.
-      // -------------------------------------------------------
-      function resetWheel() {
-        theWheel.stopAnimation(false); // Stop the animation, false as param so does not call callback function.
-        theWheel.rotationAngle = 0; // Re-set the wheel angle to 0 degrees.
-        theWheel.draw(); // Call draw to render changes to the wheel.
-
-        document.getElementById("pw1").className = ""; // Remove all colours from the power level indicators.
-        document.getElementById("pw2").className = "";
-        document.getElementById("pw3").className = "";
-
-        wheelSpinning = false; // Reset to false to power buttons and spin can be clicked again.
-      }
-
-      function reset() {
-        localStorage.clear();
-        location.reload();
-        // console.log(Math.floor((Math.random() * (goc - 1))))
-      }
-
-      function spinSelected(params) {
-        let spins = localStorage.getItem("spin-"+params) || [];
-        if (spins.length == 6) {
-          alert("Đã có kết quả rồi!");
-          return;
-        }
-        let spin_current = localStorage.getItem(localStorage.getItem("current"));
-        if (spin_current == null) {
-          powerSelected('3');
-          $("#spin-"+params).addClass("pw4");
-          localStorage.setItem('current', "spin-"+params);
-          getSpins(params);
-          return;
-        }
-        if (spin_current.length < 6) {
-          alert("Hãy quay cho hết lượt!");
-          return;
-        }
-        
-      }
-
-      function getSpins(params) {
-        let spins = localStorage.getItem("spin-"+params) || [];
-        if (spins.length > 0) {
-          for (let index = 0; index < spins.length; index++) {
-            $("#spin-"+params+"-"+index).text(spins.split("")[index]);
-            // console.log($("spin-"+params+"-"+index))
-          }
-        } else {
-          localStorage.setItem("spin-"+params, []);
-        }
-      }
-    </script>
-  </body>
+</body>
 </html>

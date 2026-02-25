@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xổ Số 4 Chữ Số - Ms. Thuy</title>
+    <link rel="stylesheet" href="./css/main.css" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="./js/Winwheel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Reusing the same core styles as li-xi and xo-so-6 for consistency */
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #FFEC82;
+            --primary-red: #C41E3A;
+            --accent-red: #FF4D4D;
+            --dark-red: #8B0000;
+            --glass-bg: rgba(20, 0, 0, 0.6);
+            --glass-border: rgba(255, 215, 0, 0.2);
+            --header-font: 'Oswald', sans-serif;
+            --body-font: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--body-font);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: #000;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%), url('./assets/tet.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr 450px;
+            gap: 25px;
+            width: 100%;
+            max-width: 1500px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout { grid-template-columns: 1fr 1fr; }
+            .wheel-container { grid-column: span 2; order: -1; }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .wheel-container { grid-column: span 1; }
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .panel h2 {
+            color: var(--primary-gold);
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: var(--header-font);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.4rem;
+        }
+
+        /* Wheel Section */
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .pointer-container {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .pointer-needle {
+            width: 40px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-gold), #B8860B);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            margin-top: -5px;
+        }
+
+        .pointer-base {
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle at center, #fff, var(--primary-gold));
+            border-radius: 50%;
+            border: 3px solid #B8860B;
+            z-index: 2;
+        }
+
+        /* Power Slider */
+        .power-meter {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .power-meter label {
+            display: block;
+            color: var(--secondary-gold);
+            font-family: var(--header-font);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .power-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .power-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        /* Prize Table Styling */
+        .prize-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        .prize-row {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .prize-row:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .prize-row.active {
+            box-shadow: 0 0 12px var(--primary-gold);
+            background: rgba(255, 215, 0, 0.12);
+        }
+
+        .prize-row.completed {
+            opacity: 0.8;
+            background: rgba(46, 204, 113, 0.08);
+        }
+
+        .prize-name {
+            padding: 12px;
+            font-weight: bold;
+            color: var(--secondary-gold);
+            font-size: 0.9rem;
+            width: 110px;
+        }
+
+        .digit-group {
+            display: flex;
+            gap: 4px;
+            padding: 8px;
+            justify-content: flex-end;
+        }
+
+        .digit-box {
+            width: 32px;
+            height: 40px;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--header-font);
+            font-size: 1.3rem;
+            color: var(--primary-gold);
+        }
+
+        .prize-row.active .digit-box {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 5px var(--primary-gold);
+        }
+
+        /* Hero/Logo/Home */
+        .title.logo b {
+            font-size: 3rem;
+            font-family: var(--header-font);
+            background: linear-gradient(90deg, #fff, var(--primary-gold), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 10px 18px;
+            border-radius: 30px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+        }
+
+        .prize-list-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .prize-list-container::-webkit-scrollbar { width: 5px; }
+        .prize-list-container::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .btn-spin {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            padding: 15px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--primary-gold);
+            font-family: var(--header-font);
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            animation: pulseBtn 2s infinite;
+        }
+        
+        @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(196,30,58,0.5); }
+            50% { transform: scale(1.03); box-shadow: 0 0 25px rgba(196,30,58,0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(196,30,58,0.5); }
+        }
+
+        .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">🏠 Trang Chủ</a>
+    
+    <div class="container">
+        <header style="margin-bottom: 25px; text-align: center;">
+            <h1 class="title logo"><b>X<span>Ổ</span> S<span>Ố</span> 4 C<span>H</span>Ữ S<span>Ố</span></b></h1>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Info -->
+            <div class="panel">
+                <h2>Cơ Cấu Giải</h2>
+                <div style="color: #bbb; line-height: 1.5; font-size: 0.85rem;">
+                    <p style="margin-bottom: 12px;">Phiên bản rút gọn 4 chữ số. Rất phù hợp cho các giải mini game hoặc quay số nhanh.</p>
+                    <div style="background: rgba(46, 204, 113, 0.05); border: 1px solid rgba(46, 204, 113, 0.2); padding: 12px; border-radius: 10px;">
+                        <p style="color: #2ecc71; font-weight: bold; margin-bottom: 5px;">Thông tin:</p>
+                        <p>Giải Tám bao gồm 10 lần quay thưởng riêng biệt (từ 8-0 đến 8-9). Hãy lần lượt chọn từng lô để quay.</p>
+                    </div>
+                    <button onclick="resetAll()" style="background: transparent; border: 1px solid #444; color: #555; width: 100%; padding: 10px; border-radius: 8px; margin-top: 25px; cursor: pointer;">Làm mới kết quả</button>
+                </div>
+            </div>
+
+            <!-- Center Wheel -->
+            <div class="wheel-container">
+                <div style="margin-bottom: 10px;">Giải đang chọn: <span id="current-prize-label" style="color: var(--primary-gold); font-weight: bold;">Chưa chọn</span></div>
+                
+                <div class="wheel-wrapper">
+                    <div class="pointer-container">
+                        <div class="pointer-base"></div>
+                        <div class="pointer-needle"></div>
+                    </div>
+                    
+                    <canvas id="canvas" width="450" height="450">
+                        Canvas error.
+                    </canvas>
+                </div>
+
+                <div class="power-meter">
+                    <label>Lực Quay: <span id="power-text" style="color: var(--primary-gold);">Vừa phải</span></label>
+                    <input type="range" min="1" max="10" value="5" class="power-slider" id="spin-power" oninput="updatePowerText()">
+                </div>
+
+                <button class="btn-spin" id="spin-btn" onclick="startSpin()" disabled>QUAY NGAY!</button>
+            </div>
+
+            <!-- Right Prize Table -->
+            <div class="panel">
+                <h2>Bảng Kết Quả</h2>
+                <div class="prize-list-container">
+                    <table class="prize-table">
+                        <tbody id="prize-rows-body">
+                            <!-- JS will populate -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="tick-sound" src="./assets/tick.mp3"></audio>
+    <audio id="win-sound" src="./assets/2.mp3"></audio>
+
+    <script src="./data/lotteries.js"></script>
+    <script>
+        const PRIZES_CONFIG = [
+            { id: '0', name: 'Đặc Biệt', digits: 4 },
+            { id: '1', name: 'Giải Nhất', digits: 4 },
+            { id: '8-0', name: 'Giải 8-0', digits: 4 },
+            { id: '8-1', name: 'Giải 8-1', digits: 4 },
+            { id: '8-2', name: 'Giải 8-2', digits: 4 },
+            { id: '8-3', name: 'Giải 8-3', digits: 4 },
+            { id: '8-4', name: 'Giải 8-4', digits: 4 },
+            { id: '8-5', name: 'Giải 8-5', digits: 4 },
+            { id: '8-6', name: 'Giải 8-6', digits: 4 },
+            { id: '8-7', name: 'Giải 8-7', digits: 4 },
+            { id: '8-8', name: 'Giải 8-8', digits: 4 },
+            { id: '8-9', name: 'Giải 8-9', digits: 4 }
+        ];
+
+        let currentId = null;
+        let spinning = false;
+        let wheel;
+        const tick = document.getElementById('tick-sound');
+        const win = document.getElementById('win-sound');
+
+        $(document).ready(() => {
+            renderTable();
+            initWheel();
+            loadState();
+        });
+
+        function renderTable() {
+            const body = $('#prize-rows-body');
+            PRIZES_CONFIG.forEach(p => {
+                let box = '';
+                for(let i=0; i<p.digits; i++) box += `<div class="digit-box" id="box-${p.id}-${i}">?</div>`;
+                body.append(`
+                    <tr class="prize-row" id="row-${p.id}" onclick="select('${p.id}')">
+                        <td class="prize-name">${p.name}</td>
+                        <td class="digit-group">${box}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        function initWheel() {
+            const segs = [
+                { fillStyle: "#FFD700", text: "0", textFillStyle: "#000" }, // Vàng Gold
+                { fillStyle: "#C41E3A", text: "1" }, // Đỏ Ruby
+                { fillStyle: "#2ECC71", text: "2" }, // Xanh Ngọc
+                { fillStyle: "#3498DB", text: "3" }, // Xanh Dương
+                { fillStyle: "#9B59B6", text: "4" }, // Tím
+                { fillStyle: "#E67E22", text: "5" }, // Cam
+                { fillStyle: "#1ABC9C", text: "6" }, // Teal
+                { fillStyle: "#E74C3C", text: "7" }, // Đỏ Tươi
+                { fillStyle: "#B8860B", text: "8" }, // Vàng Đậm
+                { fillStyle: "#FFFFFF", text: "9", textFillStyle: "#000" }  // Trắng
+            ];
+            wheel = new Winwheel({
+                canvasId: 'canvas',
+                numSegments: 10,
+                outerRadius: 210,
+                innerRadius: 60,
+                textFontSize: 32,
+                textFillStyle: 'white',
+                textFontWeight: 'bold',
+                segments: segs,
+                lineWidth: 2,
+                strokeStyle: '#ffffff',
+                animation: {
+                    type: 'spinToStop',
+                    duration: 5,
+                    spins: 10,
+                    callbackFinished: onFinish,
+                    callbackSound: () => { tick.pause(); tick.currentTime=0; tick.play(); },
+                    soundTrigger: 'pin'
+                },
+                pins: { number: 20, outerRadius: 4, fillStyle: 'silver', responsive: true }
+            });
+        }
+
+        function updatePowerText() {
+            const p = $('#spin-power').val();
+            $('#power-text').text(p <= 3 ? 'Nhẹ nhàng' : (p <= 7 ? 'Vừa phải' : 'Cực mạnh'));
+        }
+
+        function select(id) {
+            if (spinning) return;
+            const config = PRIZES_CONFIG.find(x => x.id === id);
+            const val = localStorage.getItem(`spin-${id}`) || '';
+            if (val.length >= config.digits) return alert("Đã quay xong!");
+            
+            $('.prize-row').removeClass('active');
+            $(`#row-${id}`).addClass('active');
+            currentId = id;
+            $('#current-prize-label').text(config.name);
+            $('#spin-btn').prop('disabled', false);
+        }
+
+        function startSpin() {
+            if (spinning || !currentId) return;
+            const p = parseInt($('#spin-power').val());
+            wheel.animation.duration = 2 + (p * 0.5);
+            wheel.animation.spins = 5 + (p * 2);
+
+            const res = localStorage.getItem(`spin-${currentId}`) || '';
+            const angle = getAngle(res, res.length);
+            win.loop = true;
+            win.play(); 
+            wheel.animation.stopAngle = angle;
+            wheel.startAnimation();
+            spinning = true;
+            $('#spin-btn').prop('disabled', true);
+        }
+
+        function getAngle(prefix, index) {
+            const goc = 360/10;
+            const lotts = (localStorage.getItem('lotteries') || lotteries_data).split(',');
+            const match = lotts.filter(l => l.startsWith(prefix));
+            let target = match.length ? parseInt(match[Math.floor(Math.random()*match.length)].charAt(index)) : Math.floor(Math.random()*10);
+            return (goc * target) + 1 + Math.floor(Math.random()*(goc-2));
+        }
+
+        function onFinish(seg) {
+            spinning = false; //win.pause();
+            let val = localStorage.getItem(`spin-${currentId}`) || '';
+            val += seg.text;
+            localStorage.setItem(`spin-${currentId}`, val);
+            
+            updateDisplay(currentId, val);
+            wheel.stopAnimation(false);
+            wheel.rotationAngle = 0;
+            wheel.draw();
+
+            const c = PRIZES_CONFIG.find(x => x.id === currentId);
+            if (val.length >= c.digits) {
+                $(`#row-${currentId}`).removeClass('active').addClass('completed');
+                currentId = null;
+                $('#current-prize-label').text('Chưa chọn');
+                confetti({ particleCount: 150, zIndex: 2000 });
+            } else {
+                $('#spin-btn').prop('disabled', false);
+            }
+        }
+
+        function updateDisplay(id, val) {
+            val.split('').forEach((d, i) => {
+                $(`#box-${id}-${i}`).text(d).css({background: 'var(--primary-red)', color: '#fff'});
+            });
+        }
+
+        function loadState() {
+            if (!localStorage.getItem('lotteries')) localStorage.setItem('lotteries', typeof lotteries !== 'undefined' ? lotteries : '');
+            PRIZES_CONFIG.forEach(p => {
+                const s = localStorage.getItem(`spin-${p.id}`);
+                if (s) {
+                    updateDisplay(p.id, s);
+                    if (s.length >= p.digits) $(`#row-${p.id}`).addClass('completed');
+                }
+            });
+        }
+
+        function resetAll() {
+            if (confirm("Reset?")) { localStorage.clear(); location.reload(); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xổ Số Kiến Thiết - Ms. Thuy</title>
+    <link rel="stylesheet" href="./css/main.css" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="./js/Winwheel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #FFEC82;
+            --primary-red: #C41E3A;
+            --accent-red: #FF4D4D;
+            --dark-red: #8B0000;
+            --glass-bg: rgba(20, 0, 0, 0.6);
+            --glass-border: rgba(255, 215, 0, 0.2);
+            --header-font: 'Oswald', sans-serif;
+            --body-font: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--body-font);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: #000;
+            background-image: radial-gradient(circle, rgba(139, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 100%), url('./assets/tet.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr 450px;
+            gap: 25px;
+            width: 100%;
+            max-width: 1500px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr 1fr;
+            }
+            .wheel-container {
+                grid-column: span 2;
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .wheel-container {
+                grid-column: span 1;
+            }
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .panel h2 {
+            color: var(--primary-gold);
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: var(--header-font);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1.4rem;
+        }
+
+        /* Wheel Section */
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .pointer-container {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .pointer-needle {
+            width: 40px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary-gold), #B8860B);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            margin-top: -5px;
+        }
+
+        .pointer-base {
+            width: 22px;
+            height: 22px;
+            background: radial-gradient(circle at center, #fff, var(--primary-gold));
+            border-radius: 50%;
+            border: 3px solid #B8860B;
+            z-index: 2;
+        }
+
+        /* Power Slider */
+        .power-meter {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .power-meter label {
+            display: block;
+            color: var(--secondary-gold);
+            font-family: var(--header-font);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .power-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .power-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-gold);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        /* Prize Table Styling */
+        .prize-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .prize-row {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .prize-row:hover {
+            background: rgba(255, 215, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .prize-row.active {
+            box-shadow: 0 0 15px var(--primary-gold);
+            border: 1px solid var(--primary-gold);
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .prize-row.completed {
+            opacity: 0.7;
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .prize-name {
+            padding: 15px;
+            font-weight: bold;
+            color: var(--secondary-gold);
+            width: 120px;
+        }
+
+        .digit-group {
+            display: flex;
+            gap: 5px;
+            padding: 10px;
+            justify-content: flex-end;
+        }
+
+        .digit-box {
+            width: 35px;
+            height: 45px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--header-font);
+            font-size: 1.5rem;
+            color: var(--primary-gold);
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+
+        .prize-row.active .digit-box {
+            border-color: var(--primary-gold);
+            animation: pulse-border 1s infinite alternate;
+        }
+
+        @keyframes pulse-border {
+            from { border-color: #444; }
+            to { border-color: var(--primary-gold); box-shadow: 0 0 10px var(--primary-gold); }
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-family: var(--header-font);
+            letter-spacing: 1px;
+            transition: all 0.3s;
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            font-size: 1.2rem;
+            border: 1px solid var(--primary-gold);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.4);
+            margin-top: 20px;
+        }
+
+        .btn-spin:active { transform: translateY(2px); }
+        .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; animation: none !important; }
+
+        .btn-spin.available {
+            animation: pulseBtn 1.5s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(196, 30, 58, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(196, 30, 58, 0); }
+        }
+
+        /* Logo/Header */
+        .hero-header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title.logo b {
+            font-size: 3.5rem;
+            font-family: var(--header-font);
+            background: linear-gradient(90deg, #fff, var(--primary-gold), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .home-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 10px 18px;
+            border-radius: 30px;
+            color: var(--primary-gold);
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover { background: var(--primary-gold); color: #000; }
+
+        .fixed-result {
+            margin-bottom: 15px;
+            font-family: var(--header-font);
+            color: #888;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="home-btn">🏠 Trang Chủ</a>
+    
+    <div class="container">
+        <header class="hero-header">
+            <h1 class="title logo"><b>X<span>Ổ</span> S<span>Ố</span> T<span>R</span>Ú<span>N</span>G T<span>H</span>ƯỞ<span>N</span>G</b></h1>
+        </header>
+
+        <div class="main-layout">
+            <!-- Left Panel: Stats/Info -->
+            <div class="panel">
+                <h2>Thông Tin</h2>
+                <div style="color: #ccc; line-height: 1.6; font-size: 0.9rem;">
+                    <p style="margin-bottom: 15px;">Chào mừng bạn đến với hệ thống xổ số 6 chữ số. Hãy chọn giải thưởng ở bảng bên phải để bắt đầu quay số.</p>
+                    <p style="margin-bottom: 15px;">Hệ thống sẽ quay từng chữ số một từ trái sang phải cho đến khi đủ 6 chữ số.</p>
+                    <div style="background: rgba(255,215,0,0.1); padding: 15px; border-radius: 10px; border: 1px dashed var(--glass-border);">
+                        <p style="color: var(--primary-gold); font-weight: bold; margin-bottom: 5px;">Hướng dẫn:</p>
+                        <ul style="padding-left: 20px;">
+                            <li>B1: Chọn giải muốn quay</li>
+                            <li>B2: Chỉnh lực quay (tùy chọn)</li>
+                            <li>B3: Nhấn QUAY NGAY</li>
+                        </ul>
+                    </div>
+                    <button onclick="resetAll()" style="background: transparent; border: 1px solid #444; color: #666; width: 100%; padding: 10px; border-radius: 10px; margin-top: 30px; cursor: pointer; transition: 0.3s;">Làm mới hệ thống</button>
+                </div>
+            </div>
+
+            <!-- Center: Wheel -->
+            <div class="wheel-container">
+                <div class="fixed-result">Đang quay cho giải: <span id="current-prize-label" style="color: var(--primary-gold);">Chưa chọn</span></div>
+                
+                <div class="wheel-wrapper">
+                    <div class="pointer-container">
+                        <div class="pointer-base"></div>
+                        <div class="pointer-needle"></div>
+                    </div>
+                    
+                    <canvas id="canvas" width="450" height="450">
+                        Canvas not supported.
+                    </canvas>
+                </div>
+
+                <div class="power-meter">
+                    <label>Lực Quay: <span id="power-text" style="color: var(--primary-gold);">Vừa phải</span></label>
+                    <input type="range" min="1" max="10" value="5" class="power-slider" id="spin-power" oninput="updatePowerText()">
+                </div>
+
+                <button class="btn btn-spin" id="spin-btn" onclick="startSpin()">QUAY NGAY!</button>
+            </div>
+
+            <!-- Right Panel: Prize List -->
+            <div class="panel">
+                <h2>Danh Sách Giải Thưởng</h2>
+                <div class="prize-list-container">
+                    <table class="prize-table">
+                        <tbody id="prize-rows-body">
+                            <!-- Prizes will be generated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals & Audio -->
+    <div id="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:1500;"></div>
+    
+    <audio id="tick-sound" src="./assets/tick.mp3"></audio>
+    <audio id="win-sound" src="./assets/2.mp3"></audio>
+
+    <script src="./data/lotteries.js"></script>
+    <script>
+        // Game Logic Configuration
+        const PRIZES = [
+            { id: 0, name: 'Giải Đặc Biệt', digits: 6 },
+            { id: 1, name: 'Giải Nhất', digits: 6 },
+            { id: 2, name: 'Giải Nhì', digits: 6 },
+            { id: 3, name: 'Giải Ba', digits: 6 },
+            { id: 4, name: 'Giải Tư', digits: 6 },
+            { id: 5, name: 'Giải Năm', digits: 6 },
+            { id: 6, name: 'Giải Sáu', digits: 6 },
+            { id: 7, name: 'Giải Bảy', digits: 6 },
+            { id: 8, name: 'Giải Tám', digits: 6 }
+        ];
+
+        let currentPrizeId = null;
+        let wheelSpinning = false;
+        let theWheel;
+        const tickSound = document.getElementById('tick-sound');
+        const winSound = document.getElementById('win-sound');
+
+        $(document).ready(function() {
+            renderPrizeRows();
+            initWheel();
+            updatePowerText();
+            loadProgress();
+        });
+
+        function renderPrizeRows() {
+            const container = $('#prize-rows-body');
+            container.empty();
+            PRIZES.forEach(prize => {
+                let digitsHtml = '';
+                for(let i=0; i<prize.digits; i++) {
+                    digitsHtml += `<div class="digit-box" id="prize-${prize.id}-digit-${i}">?</div>`;
+                }
+                
+                const row = `
+                    <tr class="prize-row" id="row-${prize.id}" onclick="selectPrize(${prize.id})">
+                        <td class="prize-name">${prize.name}</td>
+                        <td class="digit-group">
+                            ${digitsHtml}
+                        </td>
+                    </tr>
+                `;
+                container.append(row);
+            });
+        }
+
+        function initWheel() {
+            const arr_numbers = [
+                { fillStyle: "#FFD700", text: "0", textFillStyle: "#000" }, // Vàng Gold
+                { fillStyle: "#C41E3A", text: "1" }, // Đỏ Ruby
+                { fillStyle: "#2ECC71", text: "2" }, // Xanh Ngọc
+                { fillStyle: "#3498DB", text: "3" }, // Xanh Dương
+                { fillStyle: "#9B59B6", text: "4" }, // Tím
+                { fillStyle: "#E67E22", text: "5" }, // Cam
+                { fillStyle: "#1ABC9C", text: "6" }, // Teal
+                { fillStyle: "#E74C3C", text: "7" }, // Đỏ Tươi
+                { fillStyle: "#B8860B", text: "8" }, // Vàng Đậm
+                { fillStyle: "#FFFFFF", text: "9", textFillStyle: "#000" }  // Trắng
+            ];
+
+            theWheel = new Winwheel({
+                canvasId: 'canvas',
+                numSegments: 10,
+                outerRadius: 210,
+                innerRadius: 60,
+                textFontSize: 32,
+                textFillStyle: 'white',
+                textFontWeight: 'bold',
+                segments: arr_numbers,
+                lineWidth: 2,
+                strokeStyle: '#ffffff',
+                animation: {
+                    type: 'spinToStop',
+                    duration: 5,
+                    spins: 10,
+                    callbackFinished: onSpinFinished,
+                    callbackSound: playTickSound,
+                    soundTrigger: 'pin'
+                },
+                pins: {
+                    number: 20,
+                    fillStyle: '#silver',
+                    outerRadius: 4,
+                    responsive: true
+                }
+            });
+        }
+
+        function playTickSound() {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+            tickSound.play();
+        }
+
+        function updatePowerText() {
+            const power = document.getElementById('spin-power').value;
+            const text = document.getElementById('power-text');
+            if (power <= 3) text.innerText = 'Nhẹ nhàng';
+            else if (power <= 7) text.innerText = 'Vừa phải';
+            else text.innerText = 'Cực mạnh';
+        }
+
+        function selectPrize(id) {
+            if (wheelSpinning) return;
+            
+            const prize = PRIZES.find(p => p.id === id);
+            const currentResults = localStorage.getItem(`spin-${id}`) || '';
+            
+            if (currentResults.length >= prize.digits) {
+                alert("Giải này đã quay xong!");
+                return;
+            }
+
+            $('.prize-row').removeClass('active');
+            $(`#row-${id}`).addClass('active');
+            currentPrizeId = id;
+            $('#current-prize-label').text(prize.name);
+            $('#spin-btn').addClass('available').prop('disabled', false);
+        }
+
+        function startSpin() {
+            if (wheelSpinning || currentPrizeId === null) return;
+
+            const power = parseInt(document.getElementById('spin-power').value);
+            theWheel.animation.duration = 2 + (power * 0.5);
+            theWheel.animation.spins = 5 + (power * 2);
+
+            // Fetch stored result for this prize
+            let currentResults = localStorage.getItem(`spin-${currentPrizeId}`) || '';
+            let nextDigitIndex = currentResults.length;
+            
+            // Background music during spin
+            winSound.play();
+            winSound.loop = true;
+
+            // Generate next number logic (from original script)
+            const stopAngle = calculateStopAngle(currentResults, nextDigitIndex);
+            theWheel.animation.stopAngle = stopAngle;
+
+            theWheel.startAnimation();
+            wheelSpinning = true;
+            $('#spin-btn').prop('disabled', true).removeClass('available');
+        }
+
+        function calculateStopAngle(currentResults, index) {
+            const goc = 360 / 10;
+            // Simplified logic: for first 2 digits ( Giải 8, 7 etc often use random if no lotteries database, 
+            // but here we follow original CASE 0, 1 etc)
+            
+            let targetNumber;
+            const lotteries = (localStorage.getItem('lotteries') || lotteries_data).split(',');
+            
+            // Filter lotteries that match current prefix
+            const prefix = currentResults;
+            const matching = lotteries.filter(l => l.startsWith(prefix));
+            
+            if (matching.length > 0) {
+                const randomLottery = matching[Math.floor(Math.random() * matching.length)];
+                targetNumber = parseInt(randomLottery.charAt(index));
+                
+                // If it's the last digit, we could remove it from pot but typically lottery draws don't remove numbers 
+                // unless it's a specific rule. Original code removed it on index 5.
+                if (index === 5) {
+                    const remaining = lotteries.filter(l => l !== randomLottery);
+                    localStorage.setItem('lotteries', remaining.join(','));
+                }
+            } else {
+                targetNumber = Math.floor(Math.random() * 10);
+            }
+
+            // Calculate angle (0 is at top, but Winwheel segments are clockwise)
+            const stopAt = (goc * targetNumber) + 1 + Math.floor(Math.random() * (goc - 2));
+            return stopAt;
+        }
+
+        function onSpinFinished(indicatedSegment) {
+            wheelSpinning = false;
+            // winSound.pause();
+            
+            const digit = indicatedSegment.text;
+            let currentResults = localStorage.getItem(`spin-${currentPrizeId}`) || '';
+            currentResults += digit;
+            localStorage.setItem(`spin-${currentPrizeId}`, currentResults);
+
+            updatePrizeDisplay(currentPrizeId, currentResults);
+            theWheel.stopAnimation(false);
+            theWheel.rotationAngle = 0;
+            theWheel.draw();
+
+            const prize = PRIZES.find(p => p.id === currentPrizeId);
+            if (currentResults.length < prize.digits) {
+                $('#spin-btn').prop('disabled', false).addClass('available');
+            } else {
+                $(`#row-${currentPrizeId}`).removeClass('active').addClass('completed');
+                currentPrizeId = null;
+                $('#current-prize-label').text('Chưa chọn');
+                triggerWinConfetti();
+            }
+        }
+
+        function updatePrizeDisplay(prizeId, results) {
+            const digits = results.split('');
+            digits.forEach((d, i) => {
+                $(`#prize-${prizeId}-digit-${i}`).text(d).css('color', '#fff').css('background', 'var(--primary-red)');
+            });
+        }
+
+        function loadProgress() {
+            // Load lotteries if not present
+            if (!localStorage.getItem('lotteries')) {
+                // 'lotteries' variable comes from data/lotteries.js
+                localStorage.setItem('lotteries', typeof lotteries !== 'undefined' ? lotteries : '');
+            }
+
+            PRIZES.forEach(prize => {
+                const results = localStorage.getItem(`spin-${prize.id}`);
+                if (results) {
+                    updatePrizeDisplay(prize.id, results);
+                    if (results.length >= prize.digits) {
+                        $(`#row-${prize.id}`).addClass('completed');
+                    }
+                }
+            });
+        }
+
+        function triggerWinConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                zIndex: 2000
+            });
+        }
+
+        function resetAll() {
+            if (confirm("Xóa toàn bộ kết quả và làm lại?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
