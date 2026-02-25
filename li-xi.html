@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lì Xì May Mắn Cùng Ms.Thuy</title>
+    <link rel="stylesheet" href="./css/main.css" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="./js/Winwheel.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-gold: #FFEC82;
+            --primary-red: #C41E3A;
+            --accent-red: #FF4D4D;
+            --dark-red: #8B0000;
+            --glass-bg: rgba(20, 0, 0, 0.6);
+            --glass-border: rgba(255, 215, 0, 0.2);
+            --header-font: 'Oswald', sans-serif;
+            --body-font: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+            margin-top: 20px;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 300px 1fr 300px;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                max-width: 700px;
+            }
+            .wheel-container {
+                order: -1; /* Move wheel to top on tablet/mobile */
+            }
+        }
+
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .panel h2 {
+            color: var(--primary-gold);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 236, 130, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            transition: transform 0.3s;
+        }
+
+        .panel.collapsed .panel-content {
+            display: none;
+        }
+
+        .panel.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .panel-content {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--secondary-gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.4);
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-family: var(--body-font);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-gold);
+            background: rgba(30, 0, 0, 0.6);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: var(--body-font);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, var(--primary-gold), #B8860B);
+            color: #2c1a00;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white;
+            font-size: 1.5rem;
+            padding: 20px;
+            margin-top: 25px;
+            border: 2px solid var(--primary-gold);
+            box-shadow: 0 0 25px rgba(196, 30, 58, 0.5);
+            animation: pulseBtn 2s infinite;
+        }
+
+        @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(196, 30, 58, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(196, 30, 58, 0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(196, 30, 58, 0.5); }
+        }
+
+        .btn-spin:disabled {
+            background: #222;
+            border-color: #444;
+            cursor: not-allowed;
+            transform: none;
+            animation: none;
+            opacity: 0.5;
+        }
+
+        /* Table Styling */
+        .li-xi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .li-xi-table th, .li-xi-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .li-xi-table th {
+            color: var(--primary-gold);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .li-xi-table td {
+            font-size: 0.9rem;
+        }
+
+        .probability-badge {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* Wheel Container */
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        #canvas {
+            filter: drop-shadow(0 0 20px rgba(255, 236, 130, 0.2));
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        /* Custom Confirm Modals */
+        .confirm-modal-custom {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #2c3e50, #000000);
+            padding: 40px;
+            border-radius: 25px;
+            border: 2px solid var(--primary-gold);
+            text-align: center;
+            z-index: 2000;
+            color: white;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .confirm-modal-custom.show {
+            display: block;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1500;
+            display: none;
+        }
+
+        .modal-overlay.show {
+            display: block;
+        }
+
+        .confirm-btns {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-cancel {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-confirm-action {
+            background: linear-gradient(45deg, var(--primary-red), var(--dark-red));
+            color: white;
+        }
+
+        .pointer-container {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .pointer-needle {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-gold), #B8860B);
+            clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
+            margin-top: -5px;
+        }
+
+        .pointer-base {
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at center, #fff, var(--primary-gold));
+            border-radius: 50%;
+            border: 3px solid #B8860B;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            z-index: 2;
+        }
+
+        /* Result Animation */
+        #result-display {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #fff;
+            background-image: radial-gradient(circle at center, #ffffff 0%, #fff9e6 100%);
+            padding: 60px 80px;
+            border-radius: 40px;
+            border: 10px double var(--primary-gold);
+            text-align: center;
+            z-index: 2005;
+            color: #2c3e50;
+            box-shadow: 0 0 100px rgba(255, 215, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, visibility 0.3s;
+        }
+
+        /* Shiny Title Effect */
+        .title.logo b {
+            background: linear-gradient(90deg, #fff, var(--primary-gold), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .li-xi-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        #result-display.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+        }
+
+        #result-display h3 {
+            font-family: var(--header-font);
+            color: var(--primary-red);
+            font-size: 2rem;
+            margin: 0;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+        }
+
+        #result-display h3::before, #result-display h3::after {
+            content: '🧧';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            animation: luckyWave 1.5s ease-in-out infinite;
+        }
+
+        #result-display h3::before { left: -60px; }
+        #result-display h3::after { right: -60px; animation-delay: 0.2s; }
+
+        @keyframes luckyWave {
+            0%, 100% { transform: translateY(-50%) rotate(-10deg); }
+            50% { transform: translateY(-50%) rotate(10deg) scale(1.2); }
+        }
+
+        .result-amount {
+            font-size: 6rem;
+            font-weight: 900;
+            display: block;
+            margin: 30px 0;
+            font-family: var(--header-font);
+            background: linear-gradient(to bottom, #B8860B 22%, #FFD700 45%, #dbb400 50%, #FFD700 55%, #B8860B 78%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 10px 20px rgba(184, 134, 11, 0.3));
+            animation: winnerScale 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes winnerScale {
+            from { 
+                transform: scale(1); 
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4)); 
+            }
+            to { 
+                transform: scale(1.15); 
+                filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.8)); 
+            }
+        }
+
+        .btn-celebrate {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: white !important;
+            padding: 18px 50px !important;
+            font-size: 1.3rem !important;
+            border-radius: 50px !important;
+            border: 3px solid var(--primary-gold) !important;
+            box-shadow: 0 10px 25px rgba(196, 30, 58, 0.4);
+            cursor: pointer;
+            font-weight: 800;
+            width: auto !important;
+            margin-top: 10px;
+        }
+
+        .btn-celebrate:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(196, 30, 58, 0.6);
+        }
+
+        .history-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .remove-btn {
+            color: #e74c3c;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+        .amount-hidden {
+            filter: blur(8px);
+            opacity: 0.5;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .amount-visible {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        /* Power Slider Styling */
+        .power-meter {
+            width: 100%;
+            max-width: 300px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .power-meter label {
+            display: block;
+            color: var(--secondary-gold);
+            font-family: var(--header-font);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .power-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            margin: 15px 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .power-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-gold), #B8860B);
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .power-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .hero-text h1 { font-size: 2.5rem !important; }
+            #result-display {
+                width: 95%;
+                padding: 40px 20px;
+            }
+            .result-amount {
+                font-size: 3.5rem;
+            }
+            #result-display h3 {
+                font-size: 1.2rem;
+            }
+            #result-display h3::before, #result-display h3::after {
+                font-size: 1.5rem;
+            }
+            #result-display h3::before { left: -35px; }
+            #result-display h3::after { right: -35px; }
+            
+            .title.logo b {
+                font-size: 2rem;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="hero-bg neon-hero neon hero-header" style="margin-bottom: 0;">
+            <div class="hero-text">
+                <h1 class="title logo"><b>L<span>Ì</span> X<span>Ì</span> M<span>A</span>Y M<span>Ắ</span>N</b></h1>
+            </div>
+        </section>
+
+        <div class="main-layout">
+            <!-- Left Panel: Configuration -->
+            <div class="panel" id="config-panel">
+                <h2 onclick="togglePanel('config-panel')">
+                    Cấu hình Lì Xì 
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="panel-content">
+                    <div class="form-group">
+                        <label>Mệnh giá (VNĐ)</label>
+                        <input type="number" id="denom-value" placeholder="Ví dụ: 50000" />
+                    </div>
+                    <div class="form-group">
+                        <label>Số lượng / Tỉ lệ</label>
+                        <input type="number" id="denom-weight" step="any" placeholder="Ví dụ: 10" />
+                    </div>
+                    <div class="form-group">
+                        <label>Màu sắc (HEX)</label>
+                        <input type="color" id="denom-color" value="#e74c3c" />
+                    </div>
+                    <button class="btn btn-add" onclick="addDenomination()">Thêm Mệnh Giá</button>
+
+                    <div style="margin-top: 30px;">
+                        <table class="li-xi-table" id="denom-table">
+                            <thead>
+                                <tr>
+                                    <th>Mệnh giá</th>
+                                    <th>Tỉ lệ</th>
+                                    <th>%</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Denominations will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn" onclick="openRestoreConfirm()" style="background: rgba(255,255,255,0.05); color: var(--secondary-gold); border: 1px dashed var(--glass-border); margin-top: 15px; font-size: 0.8rem;">Tải cấu hình mẫu</button>
+                </div>
+            </div>
+
+            <!-- Center: Spinning Wheel -->
+            <div class="wheel-container">
+                <div class="pointer-container">
+                    <div class="pointer-base"></div>
+                    <div class="pointer-needle"></div>
+                </div>
+                <canvas id="canvas" width="500" height="500">
+                    Canvas not supported, please use another browser.
+                </canvas>
+                
+                <div class="power-meter">
+                    <label>LỰC QUAY: <span id="power-text" style="color: var(--primary-gold);">Vừa phải</span></label>
+                    <input type="range" min="1" max="10" value="5" class="power-slider" id="spin-power" oninput="updatePowerText()">
+                </div>
+
+                <button class="btn btn-spin" id="spin-btn" onclick="startSpinning()" disabled>QUAY NGAY!</button>
+                <div style="margin-top: 15px;">
+                    <button onclick="resetAll(event)" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #ccc; padding: 5px 15px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;">Xóa tất cả & Làm lại</button>
+                </div>
+            </div>
+
+            <!-- Right Panel: History -->
+            <div class="panel">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="margin: 0;">Lịch sử Nhận Lộc</h2>
+                    <a href="#" onclick="clearHistory(); return false;" style="color: #888; text-decoration: none; font-size: 0.75rem;">Xóa hết</a>
+                </div>
+                <ul class="history-list" id="history">
+                    <!-- History items will appear here -->
+                </ul>
+                <div id="history-total" style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--glass-border); text-align: right;">
+                    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px;">
+                        <span style="color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Tổng cộng:</span>
+                        <span id="toggle-total" onclick="toggleTotalVisibility()" style="cursor: pointer; color: var(--primary-gold); font-size: 0.9rem;">🚫</span>
+                    </div>
+                    <div id="total-amount" class="amount-hidden" style="font-size: 1.8rem; color: var(--primary-gold); font-family: var(--header-font); font-weight: bold; margin-top: 5px; transition: all 0.3s;">0đ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="result-display">
+        <h3>CHÚC MỪNG BẠN NHẬN ĐƯỢC LÌ XÌ</h3>
+        <span class="result-amount" id="won-amount">0đ</span>
+        <button class="btn btn-celebrate" onclick="closeResult()">Tuyệt vời!</button>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div id="confirm-modal" class="confirm-modal-custom">
+        <h3 style="color: var(--primary-gold); font-family: var(--header-font); font-size: 1.5rem;">Xác Nhận Xóa</h3>
+        <p style="margin: 15px 0;">Bạn có chắc chắn muốn xóa tất cả cấu hình và làm lại từ đầu không?</p>
+        <div class="confirm-btns">
+            <button class="btn btn-cancel" onclick="closeConfirm()">Hủy</button>
+            <button class="btn btn-confirm-action" onclick="executeReset()">Xác Nhận</button>
+        </div>
+    </div>
+
+    <audio id="tick-sound" src="./assets/tick.mp3"></audio>
+    <audio id="win-sound" src="./assets/2.mp3"></audio>
+
+    <!-- Restore Confirm Modal -->
+    <div id="restore-confirm-modal" class="confirm-modal-custom">
+        <h3 style="color: var(--primary-gold); font-family: var(--header-font); font-size: 1.5rem;">Tải Cấu Hình Mẫu</h3>
+        <p style="margin: 15px 0;">Bạn muốn tải lại bộ cấu hình mặc định (5k, 10k, 20k, 50k)? Toàn bộ cấu hình hiện tại sẽ bị thay thế.</p>
+        <div class="confirm-btns">
+            <button class="btn btn-cancel" onclick="closeRestoreConfirm()">Hủy</button>
+            <button class="btn btn-confirm-action" style="background: linear-gradient(45deg, #27ae60, #2ecc71);" onclick="executeRestore()">Xác Nhận</button>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_DENOMS = [
+            { value: 50000, weight: 4, color: '#f1c40f' },
+            { value: 20000, weight: 10, color: '#3498db' },
+            { value: 10000, weight: 30, color: '#e74c3c' },
+            { value: 5000, weight: 20, color: '#2ecc71' }
+        ];
+
+        let denominations = JSON.parse(localStorage.getItem('li_xi_denoms')) || [...DEFAULT_DENOMS];
+
+        let totalWon = 0;
+
+        let theWheel;
+        let wheelSpinning = false;
+        const tickSound = document.getElementById('tick-sound');
+        const winSound = document.getElementById('win-sound');
+
+        function playSound() {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+            tickSound.play();
+        }
+
+        function initWheel() {
+            const totalWeight = denominations.reduce((a, b) => a + Number(b.weight), 0);
+            
+            const segments = denominations.map(d => ({
+                fillStyle: d.color,
+                text: formatCurrency(d.value),
+                size: totalWeight > 0 ? (Number(d.weight) / totalWeight) * 360 : 0,
+                amount: d.value
+            }));
+
+            // If no denominations, just clear and return
+            if (segments.length === 0) {
+                if (theWheel) {
+                    const ctx = theWheel.canvas.getContext('2d');
+                    ctx.clearRect(0, 0, theWheel.canvas.width, theWheel.canvas.height);
+                }
+                document.getElementById('spin-btn').disabled = true;
+                return;
+            }
+            
+            theWheel = new Winwheel({
+                numSegments: segments.length,
+                outerRadius: 210,
+                innerRadius: 50,
+                textFontSize: 16,
+                textFillStyle: 'white',
+                segments: segments,
+                animation: {
+                    type: 'spinToStop',
+                    duration: 5,
+                    spins: 8,
+                    callbackFinished: alertPrize,
+                    callbackSound: playSound,
+                    soundTrigger: 'pin'
+                },
+                pins: {
+                    number: 16,
+                    fillStyle: '#silver',
+                    outerRadius: 4,
+                }
+            });
+
+            updateTable();
+            document.getElementById('spin-btn').disabled = denominations.length === 0;
+        }
+
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
+        }
+
+        function updateTable() {
+            const tableBody = document.querySelector('#denom-table tbody');
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            const totalWeight = denominations.reduce((sum, d) => sum + Number(d.weight), 0);
+
+            denominations.forEach((d, index) => {
+                const percentage = totalWeight > 0 ? ((Number(d.weight) / totalWeight) * 100).toFixed(1) : 0;
+                const row = `
+                    <tr>
+                        <td style="color: ${d.color}; font-weight: bold;">${formatCurrency(d.value)}</td>
+                        <td>${d.weight}</td>
+                        <td><span class="probability-badge">${percentage}%</span></td>
+                        <td><span class="remove-btn" onclick="removeDenom(${index})">✕</span></td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+
+            localStorage.setItem('li_xi_denoms', JSON.stringify(denominations));
+        }
+
+        function addDenomination() {
+            const value = parseInt(document.getElementById('denom-value').value);
+            const weight = parseFloat(document.getElementById('denom-weight').value);
+            const color = document.getElementById('denom-color').value;
+
+            if (isNaN(value) || isNaN(weight) || weight <= 0) {
+                alert('Vui lòng nhập mệnh giá và tỉ lệ hợp lệ!');
+                return;
+            }
+
+            denominations.push({ value, weight, color });
+            document.getElementById('denom-value').value = '';
+            document.getElementById('denom-weight').value = '';
+            
+            updateTable();
+            initWheel();
+        }
+
+        function removeDenom(index) {
+            denominations.splice(index, 1);
+            updateTable();
+            initWheel();
+        }
+
+        function updatePowerText() {
+            const power = document.getElementById('spin-power').value;
+            const text = document.getElementById('power-text');
+            if (power <= 3) text.innerText = 'Nhẹ nhàng';
+            else if (power <= 7) text.innerText = 'Vừa phải';
+            else text.innerText = 'Cực mạnh';
+        }
+
+        function startSpinning() {
+            if (wheelSpinning) return;
+           
+            const power = parseInt(document.getElementById('spin-power').value);
+            
+            // Adjust wheel animation based on power
+            if (theWheel) {
+                theWheel.animation.duration = 3 + (power * 0.5); // 3.5s to 8s
+                theWheel.animation.spins = 2 + (power * 1.5);    // 3.5 to 17 spins
+            }
+
+            // Play background music immediately
+            // winSound.currentTime = 0;
+            winSound.loop = true;
+            winSound.play();
+
+            // Safety check before stopping animation
+            if (theWheel && theWheel.animation && theWheel.animation.tween) {
+                theWheel.stopAnimation(false);
+            }
+            
+            if (theWheel) {
+                theWheel.rotationAngle = 0;
+                theWheel.draw();
+
+                theWheel.startAnimation();
+                wheelSpinning = true;
+                document.getElementById('spin-btn').disabled = true;
+            }
+        }
+
+        function alertPrize(indicatedSegment) {
+            winSound.play();
+            
+            const wonText = indicatedSegment.text;
+            document.getElementById('won-amount').innerText = wonText;
+            
+            // Show modal first
+            document.getElementById('modal-overlay').classList.add('show');
+            document.getElementById('result-display').classList.add('show');
+
+            // Fire confetti with high z-index to be on TOP of the modal
+            const fire = (particleRatio, opts) => {
+                confetti({
+                    ...opts,
+                    origin: opts.origin || { y: 0.7 },
+                    particleCount: Math.floor(200 * particleRatio),
+                    zIndex: 2100, // Higher than modal (2005)
+                    colors: ['#FFD700', '#C41E3A', '#FFFFFF', '#FF0000']
+                });
+            };
+
+            // Burst 1: Center
+            setTimeout(() => {
+                fire(0.25, { spread: 26, startVelocity: 55 });
+                fire(0.2, { spread: 60 });
+                fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+                fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+                fire(0.1, { spread: 120, startVelocity: 45 });
+            }, 300);
+
+            // Burst 2: Left and Right corners
+            setTimeout(() => {
+                confetti({
+                    particleCount: 100,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0, y: 0.8 },
+                    zIndex: 2100,
+                    colors: ['#FFD700', '#C41E3A']
+                });
+                confetti({
+                    particleCount: 100,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1, y: 0.8 },
+                    zIndex: 2100,
+                    colors: ['#FFD700', '#C41E3A']
+                });
+            }, 600);
+            
+            addToHistory(wonText);
+            
+            wheelSpinning = false;
+            document.getElementById('spin-btn').disabled = false;
+        }
+
+        function closeResult() {
+            document.getElementById('result-display').classList.remove('show');
+            document.getElementById('modal-overlay').classList.remove('show');
+            
+            // Stop background music
+            // winSound.pause();
+            // winSound.currentTime = 0;
+            // winSound.loop = false;
+        }
+
+        function addToHistory(amountText) {
+            const history = document.getElementById('history');
+            const now = new Date();
+            const timeStr = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // Extract number from amountText (e.g., "50.000đ" -> 50000)
+            const amountValue = parseInt(amountText.replace(/[^0-9]/g, '')) || 0;
+            totalWon += amountValue;
+            document.getElementById('total-amount').innerText = formatCurrency(totalWon);
+
+            const item = `
+                <li class="history-item">
+                    <span>${amountText}</span>
+                    <span style="color: #888; font-size: 0.8rem;">${timeStr}</span>
+                </li>
+            `;
+            history.insertAdjacentHTML('afterbegin', item);
+        }
+
+        function resetAll(event) {
+            if (event) event.preventDefault();
+            document.getElementById('modal-overlay').classList.add('show');
+            document.getElementById('confirm-modal').classList.add('show');
+        }
+
+        function closeConfirm() {
+            document.getElementById('modal-overlay').classList.remove('show');
+            document.getElementById('confirm-modal').classList.remove('show');
+        }
+
+        function executeReset() {
+            closeConfirm();
+            denominations = [];
+            localStorage.removeItem('li_xi_denoms');
+            
+            // Completely reset the wheel object and canvas
+            if (theWheel) {
+                if (theWheel.animation && theWheel.animation.tween) {
+                    theWheel.stopAnimation(false);
+                }
+                theWheel.rotationAngle = 0;
+                const ctx = theWheel.canvas.getContext('2d');
+                ctx.clearRect(0, 0, theWheel.canvas.width, theWheel.canvas.height);
+            }
+            
+            document.getElementById('spin-btn').disabled = true;
+            
+            // Clear the table and re-init
+            updateTable();
+            initWheel();
+        }
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            panel.classList.toggle('collapsed');
+        }
+
+        function openRestoreConfirm() {
+            document.getElementById('modal-overlay').classList.add('show');
+            document.getElementById('restore-confirm-modal').classList.add('show');
+        }
+
+        function closeRestoreConfirm() {
+            document.getElementById('modal-overlay').classList.remove('show');
+            document.getElementById('restore-confirm-modal').classList.remove('show');
+        }
+
+        function executeRestore() {
+            closeRestoreConfirm();
+            
+            if (theWheel && theWheel.animation && theWheel.animation.tween) {
+                theWheel.stopAnimation(false);
+            }
+            
+            denominations = JSON.parse(JSON.stringify(DEFAULT_DENOMS));
+            totalWon = 0;
+            document.getElementById('total-amount').innerText = '0đ';
+            updateTable();
+            initWheel();
+        }
+
+        function clearHistory() {
+            if (confirm('Bạn muốn xóa toàn bộ lịch sử trúng thưởng?')) {
+                document.getElementById('history').innerHTML = '';
+                totalWon = 0;
+                document.getElementById('total-amount').innerText = '0đ';
+            }
+        }
+        // Initialize on load
+        window.onload = initWheel;
+        function toggleTotalVisibility() {
+            const amount = document.getElementById('total-amount');
+            const icon = document.getElementById('toggle-total');
+            if (amount.classList.contains('amount-visible')) {
+                amount.classList.remove('amount-visible');
+                amount.classList.add('amount-hidden');
+                icon.innerText = '🚫'; // Closed eye / Hidden icon
+            } else {
+                amount.classList.remove('amount-hidden');
+                amount.classList.add('amount-visible');
+                icon.innerText = '👁️';
+            }
+        }
+    </script>
+</body>
+</html>
